@@ -93,6 +93,8 @@ FROM
 INNER JOIN `exams` ON `courses`.`id` = `exams`.`course_id`
 INNER JOIN `exam_student` ON `exams`.`id` = `exam_student`.`exam_id`
 INNER JOIN `degrees` ON `degrees`.`id` = `courses`.`degree_id`
+WHERE
+    `exam_student`.`vote` > 18
 GROUP BY
     `degrees`.`id`
 ORDER BY
