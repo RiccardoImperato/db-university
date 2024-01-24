@@ -34,8 +34,9 @@ GROUP BY
 
 3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
 
-    SELECT
-    *
+SELECT
+    `teachers`.*,
+    `courses`.*
 FROM
     `course_teacher`
 INNER JOIN `courses` ON `courses`.`id` = `course_teacher`.`course_id`
@@ -50,8 +51,8 @@ sono iscritti e il relativo dipartimento, in ordine alfabetico per cognome e
 nome
 
 SELECT
-    `students`.`name`,
     `students`.`surname`,
+    `students`.`name`,
     `degrees`.`name` AS `Iscrizione`,
     `departments`.`name` AS `dipartimento`
 FROM
@@ -59,8 +60,8 @@ FROM
 INNER JOIN `degrees` ON `degrees`.`id` = `students`.`degree_id`
 INNER JOIN `departments` ON `departments`.`id` = `degrees`.`department_id`
 ORDER BY
-    `students`.`name`,
-    `students`.`surname`;
+    `students`.`surname`,
+    `students`.`name`;
 
 
 
@@ -82,8 +83,8 @@ INNER JOIN `teachers` ON `courses`.`id` = `teachers`.`id`;
 Matematica (54)
 
 SELECT DISTINCT
-    `teachers`.`name` AS `nome_insegnante`,
     `teachers`.`surname` AS `cognome_insegnante`,
+    `teachers`.`name` AS `nome_insegnante`,
     `departments`.`name` AS `dipartimento`
 FROM
     `teachers`
@@ -94,5 +95,27 @@ INNER JOIN `departments` ON `degrees`.`department_id` = `departments`.`id`
 WHERE
     `departments`.`name` = "Dipartimento di Matematica"
 ORDER BY
-    `teachers`.`name`,
-    `teachers`.`surname`;
+    `teachers`.`surname`,
+    `teachers`.`name`;
+
+
+
+7. BONUS: Selezionare per ogni studente il numero di tentativi sostenuti per ogni esame, 
+    stampando anche il voto massimo. Successivamente, filtrare i tentativi con voto minimo 18.
+SELECT
+    students.id,
+    students.name,
+    students.surname,
+    courses.name,
+    COUNT(exam_student.vote) AS `numero_tentativi`,
+   MAX(exam_student.vote) AS `voto_massimo`,
+   MIN(exam_student.vote) AS `voto_minimo`
+FROM
+    `students`
+INNER JOIN `exam_student` ON `students`.`id` = `exam_student`.`student_id`
+INNER JOIN `exams` ON `exam_student`.`exam_id` = `exams`.`id`
+INNER JOIN `courses` ON `exams`.`course_id` = `courses`.id
+GROUP BY
+    students.id,
+    courses.id
+HAVING `voto_minimo` > 18
